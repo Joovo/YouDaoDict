@@ -2,32 +2,38 @@ import requests
 from  lxml import etree
 
 def parse(html):
-    details_xpath='//*[@id="collinsResult"]/div/div/div/div/ul'
+    # class='ol'的 div的xpath
+    details_xpath='//*[@id="collinsResult"]/div/div/div/div/ul' 
     tree=etree.HTML(html)
     #print(dir(tree.xpath(details_xpath)[0]))
     # print(tree.xpath(details_xpath)[0].text)
     # //*[@id="collinsResult"]/div/div/div/div/ul/li[1]
+    # 遍历下方的li节点
     for li in range(1,len(tree.xpath(details_xpath)[0])+1):
         print(str(li)+'.')
+        # 构造li节点的xpath
         li_xpath='//*[@id="collinsResult"]/div/div/div/div/ul/li['+str(li)+']'
+        # 获取所有的test，直接用 strip() 方法
         all=tree.xpath(li_xpath+'/div[1]/p//text()')
         string=''
-        all=[i.strip('\t').strip() for i in all]
+        all=[i.strip('\t') for i in all]
         for i in range(1,len(all)):
             string+=all[i]
             if i ==1:
                 string+='.\n'
         print(string)
+        # 与上同理
         example_xpath=li_xpath+'/div[2]/div//text()'
         example_all=tree.xpath(example_xpath)
         print('例:')
         example_str=''
-        example_all=[i.strip('\t').strip() for i in example_all]
+        example_all=[i.strip('\t') for i in example_all]
         for i in range(1,len(example_all)):
             example_str+=example_all[i]
             if i ==1:
                 example_str+=' '
         print(example_str)
+        # 保存文件 追加写入
         file=open('save.txt','a+',encoding='utf-8')
         file.write(str(li)+'.\n')
         file.write(string+'\n')
@@ -54,7 +60,7 @@ def crawl(url):
 if __name__ == '__main__':
     word = 'scene'
     # http://youdao.com/w/eng/scene/
-    url = 'http://youdao.com/w/eng/' + word + '/'
-    html=crawl(url)
-    parse(html)
+    url = 'http://youdao.com/w/eng/' + word + '/' # 构造url
+    html=crawl(url) # 返回网页源代码
+    parse(html) # 解析网页 并保存
 
